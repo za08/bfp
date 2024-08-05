@@ -13,4 +13,4 @@ Bash script 'cfp' is a comprehensive file processor that performs a series of op
 11. Deletes all files smaller than 1MB.
 12. Cleans up by deleting the contents of the user's cache directory and trash folder.
 
-This script is quite aggressive in its file processing, potentially deleting many files and modifying others. It's designed to standardize a file collection by converting formats, removing metadata, eliminating duplicates and small files, and renaming everything. It should be used with caution as it can result in permanent data loss if not used carefully.
+This script is quite aggressive in its file processing, potentially deleting many files and modifying others. It's designed to standardize a file collection by converting formats, removing metadata, eliminating duplicates and small files, and renaming everything randomly.
