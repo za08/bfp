@@ -1,4 +1,4 @@
-This bash script is a comprehensive file processor that performs a series of operations on files in a directory; functionality as follows:
+Bash script 'cfp' is a comprehensive file processor that performs a series of operations on files in a directory; functionality as follows:
 
 1. Unzips all .zip files in the current directory and then deletes the original zip files.
 2. Removes duplicate files using the 'rmlint' tool.
