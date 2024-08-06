@@ -1,58 +1,30 @@
 #!/bin/bash
+echo "File processor initiliazed."
 
-echo "Unzipping and deleting zip files..."
+echo "Extracting zipped files..."
 unzip -B '*.zip'
 rm *.zip
 echo "Complete."
 
-echo "Removing duplicates..."
+echo "Removing duplicates (pass 1)..."
 rmlint
 ./rmlint.sh -d
 rm rmlint.json
 echo "Complete."
 
-echo "Deleting files smaller than 100k..."
-find . -maxdepth 1 -type f -size -100k -delete
+echo "Renaming all files..."
+ren
 echo "Complete."
 
-echo "Striping extensions & renaming all files using 8 random digits..."
-for file in *; do
-if [ -f "$file" ]; then
-	new_name=$(head /dev/urandom | base64 | tr -dc 0-9 | head -c8)
-	while [ -e "$new_name" ]; do
-		new_name=$(head /dev/urandom | base64 | tr -dc 0-9 | head -c8)
-    done
-mv -- "$file" "$new_name"
-fi
-done
-echo "Complete."
-
-echo "Getting file extensions from MIME types..."
-get_extension() {
-    local mime_type=$1
-    case $mime_type in
-        "image/gif") echo ".gif" ;;
-        "image/jpeg") echo ".jpg" ;;
-        "video/mp4") echo ".mp4" ;;
-        "image/png") echo ".png" ;;
-        "image/webp") echo ".webp" ;;
-        # Add more MIME types and their corresponding extensions as needed
-        *) echo "" ;; # Return empty if no match found
-    esac
-}
-echo "Complete."
-
-echo "Removing EXIF data..."
+echo "Removing metadata, pass 1..."
 exiftool -all= -overwrite_original -r .
 echo "Complete."
 
-echo "Deleting files smaller than 100k again, prior to conversion, per removed exif data..."
+echo "Removing all files less than 100k..."
 find . -maxdepth 1 -type f -size -100k -delete
 echo "Complete."
 
-echo "Converting all .webp files to their respective formats..."
 find . -type f -name "*.webp" -print0 | while IFS= read -r -d '' file; do
-    # Check the file type
     file_type=$(identify -format "%m" "$file")
     case "$file_type" in
         WEBP)
@@ -70,46 +42,29 @@ find . -type f -name "*.webp" -print0 | while IFS= read -r -d '' file; do
             ;;
     esac
 done
-echo "Complete."
 
 echo "Converting JPGs less than 1MiB to PNG..."
-find . -type f -name "*.jpeg" -size -1000k -print0 | while IFS= read -r -d '' file; do
-    mogrify -format png "$file"
-    rm "$file"
+find . -type f \( -name "*.jpg" \) -size -2M -print0 | while IFS= read -r -d '' file; do
+    if mogrify -format png "$file"; then
+        rm "$file"
+    else
+        echo "Failed to convert $file"
+    fi
 done
 echo "Complete."
 
-# Remove EXIF data
-echo "Removing EXIF data per newly-converted files..."
+echo "Removing metadata, pass 2..."
 exiftool -all= -overwrite_original -r .
 echo "Complete."
 
-echo "Removing all files less than 1MiB..."
-find . -type f -name '*.*' -size -2M -delete
+echo "Removing duplicates, pass 2..."
+rmlint
+./rmlint.sh -d
+rm rmlint.json
 echo "Complete."
 
-echo "Cleaning up..."
-# Function to delete contents of a directory
-delete_contents() {
-    local dir="$1"
-    echo "Deleting contents of $dir"
-    if [ -d "$dir" ]; then
-        find "$dir" -mindepth 1 -delete 2>/dev/null
-        echo "Contents of $dir have been deleted."
-    else
-        echo "Directory $dir does not exist."
-    fi
-}
-# Delete contents of /home/u/.cache
-delete_contents "/home/u/.cache"
-# Delete contents of /home/u/.local/share/Trash
-echo "Deleting contents of /home/u/.local/share/Trash"
-if [ -d "/home/u/.local/share/Trash" ]; then
-    rm -rf /home/u/.local/share/Trash/* 2>/dev/null
-    echo "Contents of /home/u/.local/share/Trash have been deleted."
-else
-    echo "Directory /home/u/.local/share/Trash does not exist."
-fi
+echo "Removing all files less than 1MiB..." 
+find . -maxdepth 1 -type f -size -2M -delete
 echo "Complete."
-
+ 
 echo "File processing complete."
