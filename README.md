@@ -1,4 +1,5 @@
-# cfp: Comprehensive File Processor
+# cfp
+Comprehensive File Processor
 
 ## Overview
 
