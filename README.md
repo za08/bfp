@@ -1,4 +1,4 @@
-## CFP: Comprehensive File Processor
+## cfp - comprehensive file processor
 
 ## Overview
 
