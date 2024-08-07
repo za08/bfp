@@ -1,80 +1,70 @@
-## cfp - comprehensive file processor
+# cfp - comprehensive file processor
 
-## Overview
+## Description
 
-This Bash script automates various file processing tasks, including unzipping files, removing duplicates, renaming files, stripping metadata, converting image formats, and deleting small files. It's designed to process a directory of files, performing multiple operations to organize and optimize the content.
+This bash script is a comprehensive file processor. It performs various operations on files in the current directory, including unzipping, removing duplicates, renaming, stripping metadata, converting image formats, and cleaning up small files.
 
-## Requirements
+## Features
 
-- Bash shell
-- `unzip` command
-- `rmlint` tool
-- `ren` command (for file renaming)
-- `exiftool` command
-- `ImageMagick` suite (`identify` and `magick` commands)
+- Unzips all ZIP files in the current directory
+- Removes duplicate files using `rmlint`
+- Renames files (requires `ren` tool)
+- Strips metadata from files using `exiftool`
+- Removes files smaller than 100KB
+- Converts WEBP files to PNG or GIF based on their content
+- Converts small JPEG files (< 1MB) to PNG
+- Removes EXIF data from newly converted files
+- Performs a final cleanup of files smaller than 1MB
 
-Ensure all these tools are installed and accessible in your system's PATH before running the script.
+## Prerequisites
 
-## Functionality
+Ensure you have the following tools installed on your Arch Linux system:
 
-The script performs the following operations in sequence:
+- `unzip`
+- `rmlint`
+- `ren` (file renaming tool)
+- `exiftool`
+- `imagemagick`
 
-1. **Unzip Files**: Extracts all ZIP files in the current directory and removes the original ZIP files.
+You can install most of these using pacman:
 
-2. **Remove Duplicates (First Pass)**: Uses `rmlint` to identify and remove duplicate files.
+```bash
+sudo pacman -S unzip rmlint perl-image-exiftool imagemagick
+```
 
-3. **Rename Files**: Renames all files using the `ren` command (specifics depend on your `ren` configuration).
-
-4. **Remove Metadata (First Pass)**: Strips all metadata from files using `exiftool`.
-
-5. **Remove Small Files**: Deletes all files smaller than 100KB.
-
-6. **Convert WEBP Files**: 
-   - Converts WEBP files to PNG.
-   - If a WEBP file is actually a GIF, it's converted to GIF format.
-
-7. **Convert Small JPGs to PNG**: Converts JPG files smaller than 1MiB to PNG format.
-
-8. **Remove Metadata (Second Pass)**: Another round of metadata removal.
-
-9. **Remove Duplicates (Second Pass)**: Another round of duplicate removal using `rmlint`.
-
-10. **Remove Larger Small Files**: Deletes all files smaller than 1MiB.
+Note: You may install `ren` via [URL]
 
 ## Usage
 
 1. Place the script in the directory containing the files you want to process.
 2. Make the script executable:
-   ```
-   chmod +x script_name.sh
+   ```bash
+   chmod +x file_processor.sh
    ```
 3. Run the script:
+   ```bash
+   ./file_processor.sh
    ```
-   ./script_name.sh
-   ```
 
-## Caution
+## Warning
 
-- This script performs destructive operations. It will permanently delete files and modify others.
-- Always back up your data before running this script.
-- Review and understand each operation before executing the script.
+This script performs destructive operations on files in the current directory. It will:
+- Delete original ZIP files after extraction
+- Remove duplicate files
+- Delete small files
+- Convert image formats
+- Strip metadata and EXIF data
 
-## Customization
+Always run this script on a copy of your data, not the original files.
 
-You can modify the script to adjust:
-- File size thresholds for deletion
-- Image conversion parameters
-- Specific file types to process or ignore
+## Contributing
 
-## Notes
+Feel free to fork this repository and submit pull requests with improvements or bug fixes.
 
-- The script provides progress updates for each major operation.
-- Some operations are performed twice (e.g., metadata removal, duplicate removal) for thoroughness.
-- The effectiveness of the script depends on the accuracy and functionality of the external tools it uses.
+## License
 
-## Troubleshooting
+[MIT License](https://opensource.org/licenses/MIT)
 
-If you encounter issues:
-1. Ensure all required tools are installed and up-to-date.
-2. Check file permissions in the directory.
-3. Review the output for any error messages from individual commands.
+## Disclaimer
+
+Use this script at your own risk. The author is not responsible for any data loss or damage caused by the use of this script.
