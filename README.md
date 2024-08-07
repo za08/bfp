@@ -2,7 +2,7 @@
 
 ## Description
 
-This bash script is a comprehensive file processor. It performs various operations on files in the current directory, including unzipping, removing duplicates, renaming, stripping metadata, converting image formats, and cleaning up small files.
+This bash script performs various operations on files in the current directory, including unzipping, removing duplicates, renaming, stripping metadata, converting image formats, and cleaning up small files.
 
 ## Features
 
