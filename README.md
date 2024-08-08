@@ -22,7 +22,7 @@ Ensure you have the following tools installed on your Arch Linux system:
 
 - `unzip`
 - `rmlint`
-- `ren` (file renaming tool)
+- `bfr` (batch file renamer)
 - `exiftool`
 - `imagemagick`
 
