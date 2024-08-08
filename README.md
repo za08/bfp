@@ -8,7 +8,7 @@ This bash script performs various operations on files in the current directory, 
 
 - Unzips all ZIP files in the current directory
 - Removes duplicate files using `rmlint`
-- Renames files (requires `ren` tool)
+- Renames files (requires `bfr` tool)
 - Strips metadata from files using `exiftool`
 - Removes files smaller than 100KB
 - Converts WEBP files to PNG or GIF based on their content
