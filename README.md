@@ -1,4 +1,4 @@
-# cfp - comprehensive file processor
+# bfp - batch file processor
 
 ## Description
 
