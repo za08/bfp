@@ -13,7 +13,7 @@ rm rmlint.json
 echo "Complete."
 
 echo "Renaming all files..."
-ren
+bfr
 echo "Complete."
 
 echo "Removing metadata, pass 1..."
