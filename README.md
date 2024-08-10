@@ -32,7 +32,7 @@ You can install most of these using pacman:
 sudo pacman -S unzip rmlint perl-image-exiftool imagemagick
 ```
 
-Note: You may install `ren` via [URL]
+Note: You may install `bfr` via [https://github.com/za08/bfr]
 
 ## Usage
 
