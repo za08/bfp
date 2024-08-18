@@ -1,12 +1,16 @@
 #!/bin/bash
 echo "File processor initiliazed."
 
-echo "Extracting zipped files..."
+echo "Unzipping and deleting archives..."
 unzip -B '*.zip'
 rm *.zip
 echo "Complete."
 
-echo "Removing duplicates (pass 1)..."
+echo "Deleting all files less than 100k..."
+find . -maxdepth 1 -type f -size -100k -delete
+echo "Complete."
+
+echo "Removing duplicates(1)..."
 rmlint
 ./rmlint.sh -d
 rm rmlint.json
@@ -16,15 +20,12 @@ echo "Renaming all files..."
 bfr
 echo "Complete."
 
-echo "Removing metadata, pass 1..."
+echo "Removing metadata..."
 exiftool -all= -overwrite_original -r .
 echo "Complete."
 
-echo "Removing all files less than 100k..."
-find . -maxdepth 1 -type f -size -100k -delete
-echo "Complete."
-
 find . -type f -name "*.webp" -print0 | while IFS= read -r -d '' file; do
+    # Check the file type
     file_type=$(identify -format "%m" "$file")
     case "$file_type" in
         WEBP)
@@ -43,7 +44,7 @@ find . -type f -name "*.webp" -print0 | while IFS= read -r -d '' file; do
     esac
 done
 
-echo "Converting JPGs less than 1MiB to PNG..."
+echo "Converting JPEGs less than 1MiB to PNG..."
 find . -type f \( -name "*.jpg" \) -size -2M -print0 | while IFS= read -r -d '' file; do
     if mogrify -format png "$file"; then
         rm "$file"
@@ -53,11 +54,12 @@ find . -type f \( -name "*.jpg" \) -size -2M -print0 | while IFS= read -r -d '' 
 done
 echo "Complete."
 
-echo "Removing metadata, pass 2..."
+# Remove EXIF data
+echo "Removing EXIF data per newly-converted files..."
 exiftool -all= -overwrite_original -r .
 echo "Complete."
 
-echo "Removing duplicates, pass 2..."
+echo "Removing duplicates(2)..."
 rmlint
 ./rmlint.sh -d
 rm rmlint.json
