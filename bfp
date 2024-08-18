@@ -20,7 +20,8 @@ echo "Renaming all files..."
 bfr
 echo "Complete."
 
-echo "Removing metadata..."
+# Remove EXIF data
+echo "Removing EXIF data(1)..."
 exiftool -all= -overwrite_original -r .
 echo "Complete."
 
@@ -55,7 +56,7 @@ done
 echo "Complete."
 
 # Remove EXIF data
-echo "Removing EXIF data per newly-converted files..."
+echo "Removing EXIF data(2)..."
 exiftool -all= -overwrite_original -r .
 echo "Complete."
 
