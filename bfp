@@ -1,73 +1,50 @@
 #!/bin/bash
-echo "File processor initiliazed."
 
-echo "Unzipping and deleting archives..."
-unzip -B '*.zip'
-rm *.zip
-echo "Complete."
-
-echo "Deleting all files less than 100k..."
-find . -maxdepth 1 -type f -size -100k -delete
-echo "Complete."
-
-echo "Removing duplicates(1)..."
-rmlint
-./rmlint.sh -d
-rm rmlint.json
-echo "Complete."
-
-echo "Renaming all files..."
-bfr
-echo "Complete."
-
-# Remove EXIF data
-echo "Removing EXIF data(1)..."
-exiftool -all= -overwrite_original -r .
-echo "Complete."
-
-find . -type f -name "*.webp" -print0 | while IFS= read -r -d '' file; do
-    # Check the file type
-    file_type=$(identify -format "%m" "$file")
-    case "$file_type" in
-        WEBP)
-            echo "Converting $file to PNG"
-            magick "$file" "${file%.webp}.png"
-            rm "$file"
-            ;;
-        GIF)
-            echo "Converting $file to GIF"
-            magick "$file" "${file%.webp}.gif"
-            rm "$file"
-            ;;
-        *)
-            echo "$file is not a WEBP file or is in an unexpected format, skipping."
-            ;;
-    esac
+# Strip extensions & rename using 10 random digits
+for file in *; do
+if [ -f "$file" ]; then
+	new_name=$(head /dev/urandom | base64 | tr -dc 0-9 | head -c8)
+	while [ -e "$new_name" ]; do
+		new_name=$(head /dev/urandom | base64 | tr -dc 0-9 | head -c8)
+    done
+mv -- "$file" "$new_name"
+fi
 done
 
-echo "Converting JPEGs less than 1MiB to PNG..."
-find . -type f \( -name "*.jpg" \) -size -2M -print0 | while IFS= read -r -d '' file; do
-    if mogrify -format png "$file"; then
-        rm "$file"
-    else
-        echo "Failed to convert $file"
+get_extension() {
+    local mime_type=$1
+    case $mime_type in
+        "application/pdf") echo ".pdf" ;;
+        "application/zip") echo ".zip" ;;
+        "image/gif") echo ".gif" ;;
+        "image/jpeg") echo ".jpg" ;;
+        "image/png") echo ".png" ;;
+        "image/webp") echo ".webp" ;;
+        "video/mp4") echo ".mp4" ;;
+        "video/x-m4v") echo ".m4v" ;;
+        "text/plain") echo ".txt" ;;
+        
+        *) echo "" ;; # Return empty if no match found
+    esac
+}
+
+# Loop through all files in the current directory
+for file in *; do
+    # Check if it is a regular file, not a directory
+    if [ -f "$file" ]; then
+        
+        # Get the MIME type
+        mime_type=$(file -b --mime-type "$file")
+        
+        # Get the extension for this MIME type
+        extension=$(get_extension "$mime_type")
+        
+        # If an extension was found and the file doesn't already have it, append it
+        if [ -n "$extension" ] && [[ "$file" != *"$extension" ]]; then
+            mv -- "$file" "$file$extension"
+            echo "Renamed '$file' to '$file$extension'"
+        elif [ -z "$extension" ]; then
+            echo "Could not determine extension for '$file' (MIME type: $mime_type)"
+        fi
     fi
 done
-echo "Complete."
-
-# Remove EXIF data
-echo "Removing EXIF data(2)..."
-exiftool -all= -overwrite_original -r .
-echo "Complete."
-
-echo "Removing duplicates(2)..."
-rmlint
-./rmlint.sh -d
-rm rmlint.json
-echo "Complete."
-
-echo "Removing all files less than 1MiB..." 
-find . -maxdepth 1 -type f -size -2M -delete
-echo "Complete."
- 
-echo "File processing complete."
